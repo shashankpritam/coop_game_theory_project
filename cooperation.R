@@ -18,7 +18,7 @@ dim(Graph_Matrix)<-c(50,50)
 
 
 i <- 0
-while (i < 10)
+while (i < 25)
 {
   setwd('/Users/shashankpritam/Documents/qb_project')
   immigrant_tag_1_color = sample(random_color, 1, replace=TRUE)
@@ -33,21 +33,26 @@ while (i < 10)
   #print(random_row)
   #print(random_column)
 
+## check if already occupied
+  new_im = paste(random_row, random_column, 1, sep=" ")
+  if (new_im %in% paste(df$row, df$column, df$occupancy, sep=" ") == FALSE)
+  {
   df[nrow(df) + 1,] <- c(random_row, random_column, 1, immigrant_tag_1_color, immigrant_tag_2_same_color, 
                        immigrant_tag_3_diff_color, base_PTR)
   #print(df)
-
+  
   #Immigrant Placement in the Matrix Begins
+  # if tag = 1, it implies defection or non-cooperation
      if (immigrant_tag_2_same_color == 0 & immigrant_tag_3_diff_color == 0 ) {
-      Graph_Matrix[random_row, random_column] <- "HM"
+      Graph_Matrix[random_row, random_column] <- "Humanitarian"
     } else if (immigrant_tag_2_same_color == 0 & immigrant_tag_3_diff_color == 1 ) {
-      Graph_Matrix[random_row, random_column] <- "OK"
+      Graph_Matrix[random_row, random_column] <- "Ethnocentric"
     } else if (immigrant_tag_2_same_color == 1 & immigrant_tag_3_diff_color == 0 ) {
-      Graph_Matrix[random_row, random_column] <- "ET"
+      Graph_Matrix[random_row, random_column] <- "Traitor"
     } else if (immigrant_tag_2_same_color == 1 & immigrant_tag_3_diff_color == 1 ) {
-      Graph_Matrix[random_row, random_column] <- "TR"
+      Graph_Matrix[random_row, random_column] <- "Selfish"
     } else {
-      Graph_Matrix[random_row, random_column] <- "00"
+      Graph_Matrix[random_row, random_column] <- "Null"
       print(Game_Matrix[row,col])
       print(c(random_row, random_column))
       print(c(row, col))
@@ -60,12 +65,15 @@ while (i < 10)
   
 i = i+1
 }
+}
 
 print(df)
 png_files <- list.files("/Users/shashankpritam/Documents/qb_project", pattern = ".*png$", full.names = TRUE)
-gifski(png_files, gif_file = "matrix_animation.gif", width = 1800, height = 1500, delay = 0.1)
+#gifski(png_files, gif_file = "matrix_animation.gif", width = 1800, height = 1500, delay = 1)
 invisible(file.remove(list.files(pattern = "*.png")))
 
-
+par(mar=c(5.1, 4.1, 4.1, 4.1),pty='s')
+plot(Graph_Matrix, col=topo.colors, main = "Graph Matrix", xlab = "Cell", ylab = "Cell",)
 #Result
 #print(Graph_Matrix)
+
