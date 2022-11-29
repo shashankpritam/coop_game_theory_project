@@ -1,5 +1,5 @@
-library(tensorr)
 library('plot.matrix')
+library(gifski)
 
 #Immigrant Variable Assigned
 base_PTR = 0.12
@@ -16,10 +16,11 @@ Game_Matrix <- matrix(0, nrow = 50, ncol = 50)
 Graph_Matrix <- matrix(nrow = 50, ncol = 50)
 dim(Graph_Matrix)<-c(50,50)
 
+
 i <- 0
-while (i < 2500)
+while (i < 10)
 {
-  
+  setwd('/Users/shashankpritam/Documents/qb_project')
   immigrant_tag_1_color = sample(random_color, 1, replace=TRUE)
   immigrant_tag_2_same_color = sample(random_coop_defect, 1, replace=TRUE)
   immigrant_tag_3_diff_color = sample(random_coop_defect, 1, replace=TRUE)
@@ -50,24 +51,21 @@ while (i < 2500)
       print(Game_Matrix[row,col])
       print(c(random_row, random_column))
       print(c(row, col))
-      jpeg("/ndsu_classes/foo%02d.jpg")
-      my.plot(Graph_Matrix)
-      dev.off()
-
     }
-
-i = i+1}
-
-make.mov <- function(){
-  unlink("plot.mpg")
-  system("convert -delay 0.5 plot*.jpg plot.mpg")
+  {name = paste('Matrix_',i,'_plot.png', sep='')}
+  png(name,width=9,height=7.5,units='in',res=400)
+  par(mar=c(5.1, 4.1, 4.1, 4.1),pty='s')
+  plot(Graph_Matrix, col=topo.colors, main = "Graph Matrix", xlab = "Cell", ylab = "Cell",)
+  dev.off()  
+  
+i = i+1
 }
 
 print(df)
+png_files <- list.files("/Users/shashankpritam/Documents/qb_project", pattern = ".*png$", full.names = TRUE)
+gifski(png_files, gif_file = "matrix_animation.gif", width = 1800, height = 1500, delay = 0.1)
+invisible(file.remove(list.files(pattern = "*.png")))
+
+
 #Result
 #print(Graph_Matrix)
-
-par(mar=c(5.1, 4.1, 4.1, 4.1))
-plot(Graph_Matrix)
-
-
