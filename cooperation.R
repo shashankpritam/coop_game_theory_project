@@ -30,7 +30,7 @@ colnames(tsdf) <- c('Arow', 'Acolumn', 'AO',
                     'BasePTR', 'NewPTR')
 
 i <- 0
-gen <- 2
+gen <- 3
 while (i < gen)
 {
   setwd('/Users/shashankpritam/Documents/qb_project')
@@ -130,20 +130,30 @@ while (i < gen)
         ANErow = Arow
         ANEcolumn = Acolumn+1}
         
-      print(c(Arow, Acolumn, ANEcolumn))
+      #print(c(Arow, Acolumn, ANEcolumn))
       SO = occupancy.function(ANSrow, ANScolumn)
       WO = occupancy.function(ANWrow, ANWcolumn)
       NO = occupancy.function(ANNrow, ANNcolumn)
       EO = occupancy.function(ANErow, ANEcolumn)
       
-      NSO = tags.function(ANNrow, ANNcolumn)
-
+      
+      
+      ST = tags.function(ANNrow, ANNcolumn)
+      tsdf[nrow(tsdf) + 1,] <- c(Arow, Acolumn, AO, 
+                                 ANSrow,ANScolumn, SO,'NNI',
+                                 ANWrow, ANWcolumn, WO, 'NSI',
+                                 ANNrow, ANNcolumn, NO, 'NEI',
+                                 ANErow, ANEcolumn, EO, 'NWI', 
+                                 base_PTR, 'NewPTR')
+      }
     }
   }
 
+  
+  
 i = i+1
 }
-}
+
 
 print(df)
 png_files <- list.files("/Users/shashankpritam/Documents/qb_project", pattern = ".*png$", full.names = TRUE)
