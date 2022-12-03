@@ -64,8 +64,7 @@ while (i < gen)
   
   ## Function to return tags of cell
   tags.function <- function(x, y) {
-    loc_id = paste(x, y, 1, sep=" ")
-    return(filter(df, row == x & column == y & occupancy == 1))
+    return(filter(df, row == x & column == y & occupancy == 1))}
 
   
   #print(df)
@@ -138,11 +137,7 @@ while (i < gen)
       EO = occupancy.function(ANErow, ANEcolumn)
       
       NSO = tags.function(ANNrow, ANNcolumn)
-      if (NSO.empty == FALSE){
-      print(NSO)
-      } else {
-      return}
-        
+
     }
   }
 
