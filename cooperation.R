@@ -175,12 +175,14 @@ while (i < gen)
         
         if (identical(nbr_location, integer(0)) == FALSE){
           if(isTRUE((Atag1 == Ntag1) & (Atag2 == 0)  )){
-            df[cell_location, ]$PTR = df[nbr_location, ]$PTR  - cost
-            df[nbr_location, ]$PTR = df[nbr_location, ]$PTR + benefit
+            df[cell_location, 7] = df[cell_location, 7]  - cost
+            df[nbr_location, 7] = df[nbr_location, 7] + benefit
+            print(c(Atag1, Ntag1, Nrow, Ncolumn, Atag2, Atag3, "Case 1"))
             
           } else if(isTRUE((Atag1 != Ntag1) & identical(Atag3, 0) )){
-            df[cell_location, ]$PTR = df[nbr_location, ]$PTR  - cost
-            df[nbr_location, ]$PTR = df[nbr_location, ]$PTR + benefit
+            df[cell_location, 7] = df[cell_location, 7]  - cost
+            df[nbr_location, 7] = df[nbr_location, 7] + benefit
+            print(c(Atag1, Ntag1, Nrow, Ncolumn, Atag2, Atag3, "Case 2"))
             
             
           } else {
