@@ -22,19 +22,16 @@ Graph_Matrix <- matrix(nrow = cell_size, ncol = cell_size)
 dim(Graph_Matrix)<-c(cell_size, cell_size)
 
 #Transition Storage Dataframe (For all Generation) Initialized
-tsdf <- data.frame(matrix(ncol = 21, nrow = 0))
-colnames(tsdf) <- c('Arow', 'Acolumn', 'AO', 
-                    'NNrow','NNcolumn', 'NNO','NNI',
-                    'NSrow', 'NScolumn', 'NSO', 'NSI',
-                    'NErow', 'NEcolumn', 'NEO', 'NEI',
-                    'NWrow', 'NWcolumn', 'NWO', 'NWI', 
-                    'BasePTR', 'NewPTR')
+tsdf <- data.frame(matrix(ncol = 8, nrow = 0))
+colnames(tsdf) <- c('row', 'column', 'occupancy', 'tag1', 'tag2', 'tag3', 'PTR', 'gen')
+
+
 # Temporary Storage Dataframe (For One Generation) Initialized
 df <- data.frame(matrix(ncol = 7, nrow = 0))
 colnames(df) <- c('row', 'column', 'occupancy', 'tag1', 'tag2', 'tag3', 'PTR')
 
 i <- 0
-gen <- 5
+gen <- 50
 while (i < gen)
 {
 
@@ -166,21 +163,21 @@ while (i < gen)
     interaction.function <- function(Arow = 0, Acolumn = 0, Nrow = 0, Ncolumn = 0, 
                                      Atag1 = "Atag1", Atag2 = "Atag2", Atag3 = "Atag3",  
                                      Ntag1 = "Ntag1", Ntag2 = "Ntag2", Ntag3 = "Ntag3"){
+      
+      nbr_location = which(df$row == Nrow & df$column == Ncolumn)
       if(isTRUE((Atag1 == Ntag1) & (Atag2 == 0))){
         df[elements, "PTR"] = df[elements, "PTR"] - cost
-        df[which(df$row == Nrow & df$column == Ncolumn), ]$PTR = 
-          df[which(df$row == Nrow & df$column == Ncolumn), ]$PTR + benefit
+        df[nbr_location, ]$PTR = df[nbr_location, ]$PTR + benefit
+        
        
       } else if(isTRUE((Atag1 != Ntag1) & (Atag3 == 0))){
         df[elements, "PTR"] = df[elements, "PTR"] - cost
-        df[which(df$row == Nrow & df$column == Ncolumn), ]$PTR = 
-          df[which(df$row == Nrow & df$column == Ncolumn), ]$PTR + benefit
+        df[nbr_location, ]$PTR = df[nbr_location, ]$PTR + benefit
+        
     
       } else {
         df[elements, "PTR"] = df[elements, "PTR"]
-        df[which(df$row == Nrow & df$column == Ncolumn), ]$PTR = 
-          df[which(df$row == Nrow & df$column == Ncolumn), ]$PTR
-        
+        df[nbr_location, ]$PTR = df[nbr_location, ]$PTR
         
       }}
     
@@ -196,32 +193,20 @@ while (i < gen)
       NEI = interaction.function(East_ID)
     #}
     
-      
-    #tsdf[nrow(tsdf) + 1,] <- c(Arow, Acolumn, AO, 
-    #                           ANSrow,ANScolumn, SO, NSI,
-    #                          ANWrow, ANWcolumn, WO, NWI,
-    #                         ANNrow, ANNcolumn, NO, NNI,
-    #                          ANErow, ANEcolumn, EO, NEI, 
-    #                          base_PTR, 'NewPTR') 
-    
-      
-      
-    
   }
   }
 i = i+1
-print(df)
+
+df_append <- cbind(df, i)
+tsdf = rbind(tsdf,df_append)
 }
 
-
-
-png_files <- list.files("/Users/shashankpritam/Documents/qb_project", pattern = ".*png$", full.names = TRUE)
+#png_files <- list.files("/Users/shashankpritam/Documents/qb_project", pattern = ".*png$", full.names = TRUE)
 #gifski(png_files, gif_file = "matrix_animation.gif", width = 1800, height = 1500, delay = 1)
 invisible(file.remove(list.files(pattern = "*.png")))
 
-#Result
-#print(Graph_Matrix)
+#result
+print(tsdf)
+write.csv(tsdf, "result.csv", row.names=TRUE)
 
-dims <- c(2500,16,gen)
 
-## Tensor Storage
