@@ -99,8 +99,15 @@ while (i < gen)
   
   ## Function to return the color of cell
   color.function <- function (x ,y){
-    return(filter(df, row == x & column == y & occupancy == 1)$tag1)
-  }
+    color = filter(df, row == x & column == y & occupancy == 1)$tag1
+    if (identical(char_zero, color) == TRUE){
+      color = "Empty"
+      return (color)
+    } else {
+      return (color)
+    }
+    }
+
   
   # Start Roaming the Matrix by Checking Occupancy one by one
   for(elements in rownames(df)){
@@ -151,7 +158,7 @@ while (i < gen)
     CNT = color.function(ANNrow, ANNcolumn)
     CET = color.function(ANErow, ANEcolumn)
     
-    #print(c(CAT, CST, CWT, CNT, CET))
+    #print(c(CST, CWT, CNT, CET))
     
     AT = tags.function(Arow, Acolumn)
     ST = tags.function(ANSrow, ANScolumn)
@@ -161,9 +168,10 @@ while (i < gen)
     
     
     interaction.function <- function(Arow = 0, Acolumn = 0, Nrow = 0, Ncolumn = 0, 
-                                     Atag1 = "Atag1", Atag2 = "Atag2", Atag3 = "Atag3",  
-                                     Ntag1 = "Ntag1", Ntag2 = "Ntag2", Ntag3 = "Ntag3"){
+                                     Atag1 = "A", Atag2 = NULL, Atag3 = NULL,  
+                                     Ntag1 = "N"){
       
+      #print(c(Atag1, Atag2 , Atag3, Ntag1))
       nbr_location = which(df$row == Nrow & df$column == Ncolumn)
       if(isTRUE((Atag1 == Ntag1) & (Atag2 == 0))){
         df[elements, "PTR"] = df[elements, "PTR"] - cost
@@ -181,11 +189,12 @@ while (i < gen)
         
       }}
     
-    South_ID = c(Arow, Acolumn, ANSrow, ANScolumn, CAT, AT$tag2, AT$tag3,  CST, ST$tag2, ST$tag3)
-    West_ID = c(Arow, Acolumn, ANWrow, ANWcolumn, CAT, AT$tag2, AT$tag3,  CWT, WT$tag2, WT$tag3)
-    North_ID = c(Arow, Acolumn, ANNrow, ANNcolumn, CAT, AT$tag2, AT$tag3,  CNT, NT$tag2, NT$tag3)
-    East_ID = c(Arow, Acolumn, ANErow, ANEcolumn, CAT, AT$tag2, AT$tag3,  CET, ET$tag2, ET$tag3)
+    South_ID = c(Arow, Acolumn, ANSrow, ANScolumn, CAT, AT$tag2, AT$tag3,  CST)
+    West_ID = c(Arow, Acolumn, ANWrow, ANWcolumn, CAT, AT$tag2, AT$tag3,  CWT)
+    North_ID = c(Arow, Acolumn, ANNrow, ANNcolumn, CAT, AT$tag2, AT$tag3,  CNT)
+    East_ID = c(Arow, Acolumn, ANErow, ANEcolumn, CAT, AT$tag2, AT$tag3,  CET)
     
+    #print(South_ID)
     #if (identical(char_zero, (c(South_ID, West_ID, North_ID, East_ID)) == FALSE)) {
       NSI = interaction.function(South_ID)
       NWI = interaction.function(West_ID)
