@@ -104,113 +104,103 @@ while (i < gen)
     return(filter(df, row == x & column == y & occupancy == 1)$tag1)
   }
   
-  
-  for(Arow in 1:cell_size)
-  {
-    for(Acolumn in 1:cell_size)
-    {
-      if (Arow == cell_size){
-        ANSrow = 1
-        ANScolumn = Acolumn
-      } else {
-        ANSrow = Arow+1
-        ANScolumn = Acolumn}
+  # Start Roaming the Matrix by Checking Occupancy one by one
+  for(elements in rownames(df)){
+    Arow = (df[elements, "row"])
+    Acolumn = (df[elements, "column"])
+    if (Arow == cell_size){
+      ANSrow = 1
+      ANScolumn = Acolumn
+    } else {
+      ANSrow = Arow+1
+      ANScolumn = Acolumn}
     
-      if (Acolumn == 1){
-        ANWrow = Arow
-        ANWcolumn = cell_size
-      } else {
-        ANWrow = Arow
-        ANWcolumn = Acolumn-1}
-       
-      if (Arow == 1){
-        ANNrow = cell_size
-        ANNcolumn = Acolumn
-      } else {
-        ANNrow = Arow-1
-        ANNcolumn = Acolumn}
-      
-      if (Acolumn == cell_size){
-        ANErow = Arow
-        ANEcolumn = 1
-      } else {
-        ANErow = Arow
-        ANEcolumn = Acolumn+1}
+    if (Acolumn == 1){
+      ANWrow = Arow
+      ANWcolumn = cell_size
+    } else {
+      ANWrow = Arow
+      ANWcolumn = Acolumn-1}
+    
+    if (Arow == 1){
+      ANNrow = cell_size
+      ANNcolumn = Acolumn
+    } else {
+      ANNrow = Arow-1
+      ANNcolumn = Acolumn}
+    
+    if (Acolumn == cell_size){
+      ANErow = Arow
+      ANEcolumn = 1
+    } else {
+      ANErow = Arow
+      ANEcolumn = Acolumn+1}
+    
+    #print(c(Arow, Acolumn, ANEcolumn))
+    
+    AO = occupancy.function(Arow, Acolumn)
+    SO = occupancy.function(ANSrow, ANScolumn)
+    WO = occupancy.function(ANWrow, ANWcolumn)
+    NO = occupancy.function(ANNrow, ANNcolumn)
+    EO = occupancy.function(ANErow, ANEcolumn)
+    
+    print(c(AO, SO, WO, NO, EO))
+    
+    
+    CAT = color.function(Arow, Acolumn)
+    CST = color.function(ANSrow, ANScolumn)
+    CWT = color.function(ANWrow, ANWcolumn)
+    CNT = color.function(ANNrow, ANNcolumn)
+    CET = color.function(ANErow, ANEcolumn)
+    
+    #print(c(CAT, CST, CWT, CNT, CET))
+    
+    AT = tags.function(Arow, Acolumn)
+    ST = tags.function(ANSrow, ANScolumn)
+    WT = tags.function(ANWrow, ANWcolumn)
+    NT = tags.function(ANNrow, ANNcolumn)
+    ET = tags.function(ANErow, ANEcolumn)
+    
+    
+    interaction.function <- function(Atag1 = "Atag1", Atag2 = "Atag2", Atag3 = "Atag3",  
+                                     Ntag1 = "Ntag1", Ntag2 = "Ntag2", Ntag3 = "Ntag3"){
+      if(isTRUE((Atag1 == Ntag1) & (Atag2 == 0))){
+        return (c(cost, benefit))
         
-      #print(c(Arow, Acolumn, ANEcolumn))
-      AO = occupancy.function(Arow, Acolumn)
-      SO = occupancy.function(ANSrow, ANScolumn)
-      WO = occupancy.function(ANWrow, ANWcolumn)
-      NO = occupancy.function(ANNrow, ANNcolumn)
-      EO = occupancy.function(ANErow, ANEcolumn)
-      
-      
-      CAT = color.function(Arow, Acolumn)
-      CST = color.function(ANSrow, ANScolumn)
-      CWT = color.function(ANWrow, ANWcolumn)
-      CNT = color.function(ANNrow, ANNcolumn)
-      CET = color.function(ANErow, ANEcolumn)
-      
-      #print(c(CAT, CST, CWT, CNT, CET))
-      
-      AT = tags.function(Arow, Acolumn)
-      ST = tags.function(ANSrow, ANScolumn)
-      WT = tags.function(ANWrow, ANWcolumn)
-      NT = tags.function(ANNrow, ANNcolumn)
-      ET = tags.function(ANErow, ANEcolumn)
-      
-      
-      interaction.function <- function(Atag1 = "Atag1", Atag2 = "Atag2", Atag3 = "Atag3",  
-                                       Ntag1 = "Ntag1", Ntag2 = "Ntag2", Ntag3 = "Ntag3"){
-        if(isTRUE((Atag1 == Ntag1) & (Atag2 == 0))){
-          return (cost)
-          
-        } else if(isTRUE((Atag1 == Ntag1) & (Atag2 == 1))){
-          return (0)
-         
-        } else if(isTRUE((Atag1 != Ntag1) & (Atag3 == 0))){
-          return (cost)
+      } else if(isTRUE((Atag1 != Ntag1) & (Atag3 == 0))){
+        return (c(cost, benefit))
         
-        } else if(isTRUE((Atag1 != Ntag1) & (Atag3 == 1))){
-          return (0)
-          
-        } else {
-          next
-          
-        }}
-
-     
-      
-      South_ID = c(CAT, AT$tag2, AT$tag3,  CST, ST$tag2, ST$tag3)
-      West_ID = c(CAT, AT$tag2, AT$tag3,  CWT, WT$tag2, WT$tag3)
-      North_ID = c(CAT, AT$tag2, AT$tag3,  CNT, NT$tag2, NT$tag3)
-      East_ID = c(CAT, AT$tag2, AT$tag3,  CET, ET$tag2, ET$tag3)
-      
-      if (identical(char_zero, South_ID) == FALSE) {
-        NSI = interaction.function(South_ID)}
-      
-      if (identical(char_zero, West_ID) == FALSE) {
-        NWI = interaction.function(West_ID)}
-      
-      if (identical(char_zero, North_ID) == FALSE) {
-        NNI = interaction.function(North_ID)}
-      
-      if (identical(char_zero, East_ID) == FALSE) {
-        NEI = interaction.function(East_ID)}
-      
-      print(NSI)
-      
-      
-      tsdf[nrow(tsdf) + 1,] <- c(Arow, Acolumn, AO, 
-                                 ANSrow,ANScolumn, SO,'NSI',
-                                 ANWrow, ANWcolumn, WO, 'NWI',
-                                 ANNrow, ANNcolumn, NO, 'NNI',
-                                 ANErow, ANEcolumn, EO, 'NEI', 
-                                 base_PTR, 'NewPTR') 
-      
-      
-      }
+      } else {
+        return(c(0, 0))
+        
+      }}
+    
+    South_ID = c(CAT, AT$tag2, AT$tag3,  CST, ST$tag2, ST$tag3)
+    West_ID = c(CAT, AT$tag2, AT$tag3,  CWT, WT$tag2, WT$tag3)
+    North_ID = c(CAT, AT$tag2, AT$tag3,  CNT, NT$tag2, NT$tag3)
+    East_ID = c(CAT, AT$tag2, AT$tag3,  CET, ET$tag2, ET$tag3)
+    
+    if (identical(char_zero, (c(South_ID, West_ID, North_ID, East_ID)) == FALSE)) {
+      NSI = interaction.function(South_ID)
+      NWI = interaction.function(West_ID)
+      NNI = interaction.function(North_ID)
+      NEI = interaction.function(East_ID)
     }
+    
+    
+    if (!is.null(c(NSI, NWI, NNI, NEI))){
+      print(c(NSI, NWI, NNI, NEI))
+    }
+    
+    #tsdf[nrow(tsdf) + 1,] <- c(Arow, Acolumn, AO, 
+    #                           ANSrow,ANScolumn, SO, NSI,
+    #                          ANWrow, ANWcolumn, WO, NWI,
+    #                          ANNrow, ANNcolumn, NO, NNI,
+    #                          ANErow, ANEcolumn, EO, NEI, 
+    #                          base_PTR, 'NewPTR') 
+    #
+    
+  }
   }
 i = i+1
 }
