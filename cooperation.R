@@ -13,6 +13,7 @@ matrix_size = cell_size*cell_size
 random_coop_defect = list(0, 1)
 random_color = list("blue", "black", "green", "yellow")
 
+char_zero <- character(0)
 
 #The visual Matrix Created
 Random_Matrix <- matrix(runif(matrix_size),nrow=cell_size)
@@ -150,6 +151,8 @@ while (i < gen)
       CNT = color.function(ANNrow, ANNcolumn)
       CET = color.function(ANErow, ANEcolumn)
       
+      #print(c(CAT, CST, CWT, CNT, CET))
+      
       AT = tags.function(Arow, Acolumn)
       ST = tags.function(ANSrow, ANScolumn)
       WT = tags.function(ANWrow, ANWcolumn)
@@ -157,30 +160,52 @@ while (i < gen)
       ET = tags.function(ANErow, ANEcolumn)
       
       
-      interaction.function <- function(Atag1, Atag2, Atag3,  Ntag1, Ntag2, Ntag3){
-        if ((Atag1 == Ntag1) & (Atag2 == 0)){
+      interaction.function <- function(Atag1 = "Atag1", Atag2 = "Atag2", Atag3 = "Atag3",  
+                                       Ntag1 = "Ntag1", Ntag2 = "Ntag2", Ntag3 = "Ntag3"){
+        if(isTRUE((Atag1 == Ntag1) & (Atag2 == 0))){
           return (cost)
           
-        } else if ((Atag1 == Ntag1) & (Atag2 == 1)){
+        } else if(isTRUE((Atag1 == Ntag1) & (Atag2 == 1))){
           return (0)
+         
+        } else if(isTRUE((Atag1 != Ntag1) & (Atag3 == 0))){
+          return (cost)
         
-        } else if ((Atag1 != Ntag1) & (Atag3 == 0)){
-          return (0)
-          
-        } else if ((Atag1 != Ntag1) & (Atag3 == 1)){
+        } else if(isTRUE((Atag1 != Ntag1) & (Atag3 == 1))){
           return (0)
           
         } else {
-          return("Check Values")
+          next
           
         }}
 
      
+      
+      South_ID = c(CAT, AT$tag2, AT$tag3,  CST, ST$tag2, ST$tag3)
+      West_ID = c(CAT, AT$tag2, AT$tag3,  CWT, WT$tag2, WT$tag3)
+      North_ID = c(CAT, AT$tag2, AT$tag3,  CNT, NT$tag2, NT$tag3)
+      East_ID = c(CAT, AT$tag2, AT$tag3,  CET, ET$tag2, ET$tag3)
+      
+      if (identical(char_zero, South_ID) == FALSE) {
+        NSI = interaction.function(South_ID)}
+      
+      if (identical(char_zero, West_ID) == FALSE) {
+        NWI = interaction.function(West_ID)}
+      
+      if (identical(char_zero, North_ID) == FALSE) {
+        NNI = interaction.function(North_ID)}
+      
+      if (identical(char_zero, East_ID) == FALSE) {
+        NEI = interaction.function(East_ID)}
+      
+      print(NSI)
+      
+      
       tsdf[nrow(tsdf) + 1,] <- c(Arow, Acolumn, AO, 
-                                 ANSrow,ANScolumn, SO,'NNI',
-                                 ANWrow, ANWcolumn, WO, 'NSI',
-                                 ANNrow, ANNcolumn, NO, 'NEI',
-                                 ANErow, ANEcolumn, EO, 'NWI', 
+                                 ANSrow,ANScolumn, SO,'NSI',
+                                 ANWrow, ANWcolumn, WO, 'NWI',
+                                 ANNrow, ANNcolumn, NO, 'NNI',
+                                 ANErow, ANEcolumn, EO, 'NEI', 
                                  base_PTR, 'NewPTR') 
       
       
