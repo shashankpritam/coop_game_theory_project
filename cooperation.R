@@ -144,7 +144,7 @@ while (i < gen)
     NO = occupancy.function(ANNrow, ANNcolumn)
     EO = occupancy.function(ANErow, ANEcolumn)
     
-    print(c(AO, SO, WO, NO, EO))
+    #print(c(AO, SO, WO, NO, EO))
     
     
     CAT = color.function(Arow, Acolumn)
@@ -180,17 +180,17 @@ while (i < gen)
     North_ID = c(CAT, AT$tag2, AT$tag3,  CNT, NT$tag2, NT$tag3)
     East_ID = c(CAT, AT$tag2, AT$tag3,  CET, ET$tag2, ET$tag3)
     
-    if (identical(char_zero, (c(South_ID, West_ID, North_ID, East_ID)) == FALSE)) {
+    #if (identical(char_zero, (c(South_ID, West_ID, North_ID, East_ID)) == FALSE)) {
       NSI = interaction.function(South_ID)
       NWI = interaction.function(West_ID)
       NNI = interaction.function(North_ID)
       NEI = interaction.function(East_ID)
-    }
+    #}
     
     
-    if (!is.null(c(NSI, NWI, NNI, NEI))){
+    #if (!is.null(c(NSI, NWI, NNI, NEI))){
       print(c(NSI, NWI, NNI, NEI))
-    }
+    #}
     
     #tsdf[nrow(tsdf) + 1,] <- c(Arow, Acolumn, AO, 
     #                           ANSrow,ANScolumn, SO, NSI,
