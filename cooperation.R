@@ -14,6 +14,32 @@ random_coop_defect = list(0, 1)
 random_color = list("blue", "black", "green", "yellow")
 
 
+
+
+
+interaction.function <- function(Nrow = NULL, Ncolumn = NULL, 
+                                 Atag1 = "A", Atag2 = NULL, 
+                                 Atag3 = NULL, Ntag1 = "N"){
+  
+  nbr_location = which((df$row == Nrow) & (df$column == Ncolumn))
+  cell_location = which(df$row == Arow & df$column == Acolumn)
+  
+  if (identical(nbr_location, integer(0)) == FALSE){
+    if(isTRUE((Atag1 == Ntag1) & (Atag2 == 0)  )){
+      df[cell_location, 7] <- df[cell_location, 7]  - cost
+      df[nbr_location, 7] <- df[nbr_location, 7] + benefit
+      #print(c(Atag1, Ntag1, Nrow, Ncolumn, Atag2, Atag3, "Case 1"))
+      
+    } else if(isTRUE((Atag1 != Ntag1) & identical(Atag3, 0) )){
+      df[cell_location, 7] <- df[cell_location, 7]  - cost
+      df[nbr_location, 7] <- df[nbr_location, 7] + benefit
+      #print(c(Atag1, Ntag1, Nrow, Ncolumn, Atag2, Atag3, "Case 2"))
+      
+      
+    } else {
+      whatever = 1
+      
+    }}}
 #The visual Matrix Created
 Random_Matrix <- matrix(runif(matrix_size),nrow=cell_size)
 Game_Matrix <- matrix(0, nrow = cell_size, ncol = cell_size)
@@ -47,7 +73,8 @@ while (i < gen)
   random_row = (sample((1:cell_size), size=1, replace=TRUE))
   
   
-  ## Check if the cell is already occupied, if not, continue
+  ## Check if the cell is already occupied, if not, continue from here
+## ------------------------ Every gen starts here ------------------------------
   new_im = paste(random_row, random_column, 1, sep=" ")
   if (new_im %in% paste(df$row, df$column, df$occupancy, sep=" ") == FALSE)
   {
@@ -55,7 +82,7 @@ while (i < gen)
                            immigrant_tag_2_same_color, immigrant_tag_3_diff_color, 
                            base_PTR)
     
-    
+## ------------------------Immigration starts here -----------------------------
     #Immigrant Placement in the Matrix Begins
     # if tag = 1, it implies defection or non-cooperation
     if (immigrant_tag_2_same_color == 0 & immigrant_tag_3_diff_color == 0 ) {
@@ -71,11 +98,11 @@ while (i < gen)
     }
     
     
-    {name = paste('Matrix_',i,'_plot.png', sep='')}
-    png(name,width=9,height=7.5,units='in',res=400)
-    par(mar=c(5.1, 4.1, 4.1, 4.1),pty='s')
-    plot(Graph_Matrix, col=topo.colors, main = "Graph Matrix", xlab = "Cell", ylab = "Cell",)
-    dev.off()  
+    #{name = paste('Matrix_',i,'_plot.png', sep='')}
+    #png(name,width=9,height=7.5,units='in',res=400)
+    #par(mar=c(5.1, 4.1, 4.1, 4.1),pty='s')
+    #plot(Graph_Matrix, col=topo.colors, main = "Graph Matrix", xlab = "Cell", ylab = "Cell",)
+    #dev.off()  
     
     par(mar=c(5.1, 4.1, 4.1, 4.1),pty='s')
     plot(Graph_Matrix, col=topo.colors, main = "Graph Matrix", xlab = "Cell", ylab = "Cell",)
@@ -107,7 +134,8 @@ while (i < gen)
       }
     }
     
-    
+    # Output - Dataframe Updated with new immigrant append at the Queue 
+##--------------------- Interaction and PTR Update -----------------------------    
     # Start Roaming the Matrix by Checking Occupancy one by one
     for(elements in rownames(df)){
       Arow = (df[elements, "row"])
@@ -140,8 +168,6 @@ while (i < gen)
         ANErow = Arow
         ANEcolumn = Acolumn+1}
       
-      #print(c(Arow, Acolumn, ANEcolumn))
-      
       AO = occupancy.function(Arow, Acolumn)
       SO = occupancy.function(ANSrow, ANScolumn)
       WO = occupancy.function(ANWrow, ANWcolumn)
@@ -166,55 +192,60 @@ while (i < gen)
       ET = tags.function(ANErow, ANEcolumn)
       
       
-      interaction.function <- function(Nrow = NULL, Ncolumn = NULL, 
-                                       Atag1 = "A", Atag2 = NULL, 
-                                       Atag3 = NULL, Ntag1 = "N"){
-        
-        nbr_location = which((df$row == Nrow) & (df$column == Ncolumn))
-        cell_location = which(df$row == Arow & df$column == Acolumn)
-        
-        if (identical(nbr_location, integer(0)) == FALSE){
-          if(isTRUE((Atag1 == Ntag1) & (Atag2 == 0)  )){
-            df[cell_location, 7] = df[cell_location, 7]  - cost
-            df[nbr_location, 7] = df[nbr_location, 7] + benefit
-            print(c(Atag1, Ntag1, Nrow, Ncolumn, Atag2, Atag3, "Case 1"))
-            
-          } else if(isTRUE((Atag1 != Ntag1) & identical(Atag3, 0) )){
-            df[cell_location, 7] = df[cell_location, 7]  - cost
-            df[nbr_location, 7] = df[nbr_location, 7] + benefit
-            print(c(Atag1, Ntag1, Nrow, Ncolumn, Atag2, Atag3, "Case 2"))
-            
-            
-          } else {
-            whatever = 1
-            
-          }}}
-        
-        South_ID = c(ANSrow, ANScolumn, CAT, AT$tag2, AT$tag3,  CST)
-        West_ID = c(ANWrow, ANWcolumn, CAT, AT$tag2, AT$tag3,  CWT)
-        North_ID = c(ANNrow, ANNcolumn, CAT, AT$tag2, AT$tag3,  CNT)
-        East_ID = c(ANErow, ANEcolumn, CAT, AT$tag2, AT$tag3,  CET)
-        
-        NSI = interaction.function(Nrow = ANSrow, Ncolumn = ANScolumn, CAT, AT$tag2, AT$tag3,  CST)
-        NWI = interaction.function(Nrow = ANWrow, Ncolumn = ANWcolumn, CAT, AT$tag2, AT$tag3,  CWT)
-        NNI = interaction.function(Nrow = ANNrow, Ncolumn = ANNcolumn, CAT, AT$tag2, AT$tag3,  CNT)
-        NEI = interaction.function(Nrow = ANErow, Ncolumn = ANEcolumn, CAT, AT$tag2, AT$tag3,  CET)
 
-        
+      
+      
+      South_ID = c(ANSrow, ANScolumn, CAT, AT$tag2, AT$tag3,  CST)
+      West_ID = c(ANWrow, ANWcolumn, CAT, AT$tag2, AT$tag3,  CWT)
+      North_ID = c(ANNrow, ANNcolumn, CAT, AT$tag2, AT$tag3,  CNT)
+      East_ID = c(ANErow, ANEcolumn, CAT, AT$tag2, AT$tag3,  CET)
+      
+      #print(c(South_ID, North_ID))
+      
+      NSI = interaction.function(Nrow = ANSrow, Ncolumn = ANScolumn, CAT, AT$tag2, AT$tag3,  CST)
+      NWI = interaction.function(Nrow = ANWrow, Ncolumn = ANWcolumn, CAT, AT$tag2, AT$tag3,  CWT)
+      NNI = interaction.function(Nrow = ANNrow, Ncolumn = ANNcolumn, CAT, AT$tag2, AT$tag3,  CNT)
+      NEI = interaction.function(Nrow = ANErow, Ncolumn = ANEcolumn, CAT, AT$tag2, AT$tag3,  CET)
+      
       
     }
-    i = i+1
+    # Expected Output - Data frame Updated with new PTR values ------------------
+##--------------------- Birth and PTR realization ------------------------------
     
+    
+    
+    # Expected Output - Data frame Updated with new progeny appended at 
+    # empty cells neighboring the occupied cell when PTR is realized
+    # the mutaion rate and parents tags to be utilized
+##--------------------------   Random Death    ---------------------------------
+    
+    
+    
+    
+    
+    # Expected Output - Data frame Updated with removal of random cell 
+    # with some probability
+    
+##-------------------     End of a generation     ------------------------------    
+    
+    i = i+1
     df_append <- cbind(df, i)
     tsdf = rbind(tsdf,df_append)
-  }
+  
+    }
 }
+
+## Save gif
 #png_files <- list.files("/Users/shashankpritam/Documents/qb_project", pattern = ".*png$", full.names = TRUE)
 #gifski(png_files, gif_file = "matrix_animation.gif", width = 1800, height = 1500, delay = 1)
 invisible(file.remove(list.files(pattern = "*.png")))
 
-#result
+
+
+
+
+#------------------------      Result          ---------------------------------
 print(tsdf)
 write.csv(tsdf, "result.csv", row.names=TRUE)
-
+#-------------------       End of Simulation           -------------------------
 
