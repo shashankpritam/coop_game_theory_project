@@ -1,9 +1,16 @@
+#@Shashank Pritam (shashankpritam@gmail.com)
+#A simulation (of below cited article) written in R 
+#Hammond, Ross A., and Robert Axelrod. “The Evolution of Ethnocentrism.” 
+#Journal of Conflict Resolution, vol. 50, no. 6, Dec. 2006, pp. 926–36. DOI.org (Crossref), 
+#https://doi.org/10.1177/0022002706293470.
+
+# Libraries Needed
 library('plot.matrix')
 library(gifski)
-library(tensorr)
 library('dplyr')
 
-#Immigrant Variable Assigned
+
+# ------------------      All the global variables here    ---------------------
 base_PTR = 0.12
 cost = 0.01
 benefit = 0.03
@@ -14,9 +21,41 @@ random_coop_defect = list(0, 1)
 random_color = list("blue", "black", "green", "yellow")
 
 
+## ---------------------     All the Functions here     ------------------------
+
+## Various Functions for Data Access
+
+## Function to return occupancy of a cell
+## --------------------------------------
+occupancy.function <- function(x, y) {
+  loc = paste(x, y, 1, sep=" ")
+  if (loc %in% paste(df$row, df$column, df$occupancy, sep=" ") == TRUE){
+    return (1)
+  } else {
+    return (0)
+  }
+}
+
+## Function to return tags of cell
+## --------------------------------------
+tags.function <- function(x, y) {
+  return(filter(df, row == x & column == y & occupancy == 1))}
+
+## Function to return the color of cell
+## --------------------------------------
+color.function <- function (x ,y){
+  color = filter(df, row == x & column == y & occupancy == 1)$tag1
+  if (identical(color, character(0)) == TRUE){
+    color = "Empty"
+    return (color)
+  } else {
+    return (color)
+  }
+}
 
 
-
+## Function to manipulate PTR values based on all interactions
+## -----------------------------------------------------------
 interaction.function <- function(Nrow = NULL, Ncolumn = NULL, 
                                  Atag1 = "A", Atag2 = NULL, 
                                  Atag3 = NULL, Ntag1 = "N"){
@@ -40,29 +79,45 @@ interaction.function <- function(Nrow = NULL, Ncolumn = NULL,
       whatever = 1
       
     }}}
-#The visual Matrix Created
+
+# -----------------          END OF FUNCTIONS        ---------------------------
+
+
+# -------------------       Storage Management       ---------------------------
+
+# The visual Matrix Created
+## ------------------------
 Random_Matrix <- matrix(runif(matrix_size),nrow=cell_size)
 Game_Matrix <- matrix(0, nrow = cell_size, ncol = cell_size)
 Graph_Matrix <- matrix(nrow = cell_size, ncol = cell_size)
 dim(Graph_Matrix)<-c(cell_size, cell_size)
 
-#Transition Storage Dataframe (For all Generation) Initialized
+# Transition Storage Dataframe (For all Generation) Initialized
+## ------------------------------------------------------------
 tsdf <- data.frame(matrix(ncol = 8, nrow = 0))
 colnames(tsdf) <- c('row', 'column', 'occupancy', 'tag1', 'tag2', 'tag3', 'PTR', 'gen')
 
 
 # Temporary Storage Dataframe (For One Generation) Initialized
+## -----------------------------------------------------------
 df <- data.frame(matrix(ncol = 7, nrow = 0))
 colnames(df) <- c('row', 'column', 'occupancy', 'tag1', 'tag2', 'tag3', 'PTR')
 
+# -------------------     End of Storage Management       ----------------------
+
+
+
+
+# ------------------------- Simulation Starts Here -----------------------------
 i <- 0
 gen <- 100
 while (i < gen)
 {
   
   
-  
+  #It's important to change the working directory before running of different system
   setwd('/Users/shashankpritam/Documents/qb_project')
+  
   # Setting Up Immigrant Tags
   immigrant_tag_1_color = sample(random_color, 1, replace=TRUE)
   immigrant_tag_2_same_color = sample(random_coop_defect, 1, replace=TRUE)
@@ -107,32 +162,7 @@ while (i < gen)
     par(mar=c(5.1, 4.1, 4.1, 4.1),pty='s')
     plot(Graph_Matrix, col=topo.colors, main = "Graph Matrix", xlab = "Cell", ylab = "Cell",)
     
-    ## Various Functions for Data Access
-    
-    ## Function to return occupancy of a cell
-    occupancy.function <- function(x, y) {
-      loc = paste(x, y, 1, sep=" ")
-      if (loc %in% paste(df$row, df$column, df$occupancy, sep=" ") == TRUE){
-        return (1)
-      } else {
-        return (0)
-      }
-    }
-    
-    ## Function to return tags of cell
-    tags.function <- function(x, y) {
-      return(filter(df, row == x & column == y & occupancy == 1))}
-    
-    ## Function to return the color of cell
-    color.function <- function (x ,y){
-      color = filter(df, row == x & column == y & occupancy == 1)$tag1
-      if (identical(color, character(0)) == TRUE){
-        color = "Empty"
-        return (color)
-      } else {
-        return (color)
-      }
-    }
+
     
     # Output - Dataframe Updated with new immigrant append at the Queue 
 ##--------------------- Interaction and PTR Update -----------------------------    
