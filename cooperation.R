@@ -13,7 +13,6 @@ matrix_size = cell_size*cell_size
 random_coop_defect = list(0, 1)
 random_color = list("blue", "black", "green", "yellow")
 
-char_zero <- character(0)
 
 #The visual Matrix Created
 Random_Matrix <- matrix(runif(matrix_size),nrow=cell_size)
@@ -31,10 +30,10 @@ df <- data.frame(matrix(ncol = 7, nrow = 0))
 colnames(df) <- c('row', 'column', 'occupancy', 'tag1', 'tag2', 'tag3', 'PTR')
 
 i <- 0
-gen <- 50
+gen <- 100
 while (i < gen)
 {
-
+  
   
   
   setwd('/Users/shashankpritam/Documents/qb_project')
@@ -46,20 +45,20 @@ while (i < gen)
   #Immigrant Placement in the Dataframe Begins
   random_column = (sample((1:cell_size), size=1, replace=TRUE))
   random_row = (sample((1:cell_size), size=1, replace=TRUE))
-
-
+  
+  
   ## Check if the cell is already occupied, if not, continue
   new_im = paste(random_row, random_column, 1, sep=" ")
   if (new_im %in% paste(df$row, df$column, df$occupancy, sep=" ") == FALSE)
   {
-  df[nrow(df) + 1,] <- c(random_row, random_column, 1, immigrant_tag_1_color, 
-                         immigrant_tag_2_same_color, immigrant_tag_3_diff_color, 
-                         base_PTR)
-
-  
-  #Immigrant Placement in the Matrix Begins
-  # if tag = 1, it implies defection or non-cooperation
-     if (immigrant_tag_2_same_color == 0 & immigrant_tag_3_diff_color == 0 ) {
+    df[nrow(df) + 1,] <- c(random_row, random_column, 1, immigrant_tag_1_color, 
+                           immigrant_tag_2_same_color, immigrant_tag_3_diff_color, 
+                           base_PTR)
+    
+    
+    #Immigrant Placement in the Matrix Begins
+    # if tag = 1, it implies defection or non-cooperation
+    if (immigrant_tag_2_same_color == 0 & immigrant_tag_3_diff_color == 0 ) {
       Graph_Matrix[random_row, random_column] <- "Humanitarian"
     } else if (immigrant_tag_2_same_color == 0 & immigrant_tag_3_diff_color == 1 ) {
       Graph_Matrix[random_row, random_column] <- "Ethnocentric"
@@ -70,146 +69,144 @@ while (i < gen)
     } else {
       Graph_Matrix[random_row, random_column] <- "Null"
     }
-  
-  
-  {name = paste('Matrix_',i,'_plot.png', sep='')}
-  png(name,width=9,height=7.5,units='in',res=400)
-  par(mar=c(5.1, 4.1, 4.1, 4.1),pty='s')
-  plot(Graph_Matrix, col=topo.colors, main = "Graph Matrix", xlab = "Cell", ylab = "Cell",)
-  dev.off()  
-
-  par(mar=c(5.1, 4.1, 4.1, 4.1),pty='s')
-  plot(Graph_Matrix, col=topo.colors, main = "Graph Matrix", xlab = "Cell", ylab = "Cell",)
-  
-  ## Various Functions for Data Access
-  
-  ## Function to return occupancy of a cell
-  occupancy.function <- function(x, y) {
-    loc = paste(x, y, 1, sep=" ")
-    if (loc %in% paste(df$row, df$column, df$occupancy, sep=" ") == TRUE){
-      return (1)
-    } else {
-      return (0)
-    }
-  }
-  
-  ## Function to return tags of cell
-  tags.function <- function(x, y) {
-    return(filter(df, row == x & column == y & occupancy == 1))}
-  
-  ## Function to return the color of cell
-  color.function <- function (x ,y){
-    color = filter(df, row == x & column == y & occupancy == 1)$tag1
-    if (identical(char_zero, color) == TRUE){
-      color = "Empty"
-      return (color)
-    } else {
-      return (color)
-    }
-    }
-
-  
-  # Start Roaming the Matrix by Checking Occupancy one by one
-  for(elements in rownames(df)){
-    Arow = (df[elements, "row"])
-    Acolumn = (df[elements, "column"])
-    if (Arow == cell_size){
-      ANSrow = 1
-      ANScolumn = Acolumn
-    } else {
-      ANSrow = Arow+1
-      ANScolumn = Acolumn}
-    
-    if (Acolumn == 1){
-      ANWrow = Arow
-      ANWcolumn = cell_size
-    } else {
-      ANWrow = Arow
-      ANWcolumn = Acolumn-1}
-    
-    if (Arow == 1){
-      ANNrow = cell_size
-      ANNcolumn = Acolumn
-    } else {
-      ANNrow = Arow-1
-      ANNcolumn = Acolumn}
-    
-    if (Acolumn == cell_size){
-      ANErow = Arow
-      ANEcolumn = 1
-    } else {
-      ANErow = Arow
-      ANEcolumn = Acolumn+1}
-    
-    #print(c(Arow, Acolumn, ANEcolumn))
-    
-    AO = occupancy.function(Arow, Acolumn)
-    SO = occupancy.function(ANSrow, ANScolumn)
-    WO = occupancy.function(ANWrow, ANWcolumn)
-    NO = occupancy.function(ANNrow, ANNcolumn)
-    EO = occupancy.function(ANErow, ANEcolumn)
-    
-    #print(c(AO, SO, WO, NO, EO))
     
     
-    CAT = color.function(Arow, Acolumn)
-    CST = color.function(ANSrow, ANScolumn)
-    CWT = color.function(ANWrow, ANWcolumn)
-    CNT = color.function(ANNrow, ANNcolumn)
-    CET = color.function(ANErow, ANEcolumn)
+    {name = paste('Matrix_',i,'_plot.png', sep='')}
+    png(name,width=9,height=7.5,units='in',res=400)
+    par(mar=c(5.1, 4.1, 4.1, 4.1),pty='s')
+    plot(Graph_Matrix, col=topo.colors, main = "Graph Matrix", xlab = "Cell", ylab = "Cell",)
+    dev.off()  
     
-    #print(c(CST, CWT, CNT, CET))
+    par(mar=c(5.1, 4.1, 4.1, 4.1),pty='s')
+    plot(Graph_Matrix, col=topo.colors, main = "Graph Matrix", xlab = "Cell", ylab = "Cell",)
     
-    AT = tags.function(Arow, Acolumn)
-    ST = tags.function(ANSrow, ANScolumn)
-    WT = tags.function(ANWrow, ANWcolumn)
-    NT = tags.function(ANNrow, ANNcolumn)
-    ET = tags.function(ANErow, ANEcolumn)
+    ## Various Functions for Data Access
     
-    
-    interaction.function <- function(Arow = 0, Acolumn = 0, Nrow = 0, Ncolumn = 0, 
-                                     Atag1 = "A", Atag2 = NULL, Atag3 = NULL,  
-                                     Ntag1 = "N"){
-      
-      #print(c(Atag1, Atag2 , Atag3, Ntag1))
-      nbr_location = which(df$row == Nrow & df$column == Ncolumn)
-      if(isTRUE((Atag1 == Ntag1) & (Atag2 == 0))){
-        df[elements, "PTR"] = df[elements, "PTR"] - cost
-        df[nbr_location, ]$PTR = df[nbr_location, ]$PTR + benefit
-        
-       
-      } else if(isTRUE((Atag1 != Ntag1) & (Atag3 == 0))){
-        df[elements, "PTR"] = df[elements, "PTR"] - cost
-        df[nbr_location, ]$PTR = df[nbr_location, ]$PTR + benefit
-        
-    
+    ## Function to return occupancy of a cell
+    occupancy.function <- function(x, y) {
+      loc = paste(x, y, 1, sep=" ")
+      if (loc %in% paste(df$row, df$column, df$occupancy, sep=" ") == TRUE){
+        return (1)
       } else {
-        df[elements, "PTR"] = df[elements, "PTR"]
-        df[nbr_location, ]$PTR = df[nbr_location, ]$PTR
+        return (0)
+      }
+    }
+    
+    ## Function to return tags of cell
+    tags.function <- function(x, y) {
+      return(filter(df, row == x & column == y & occupancy == 1))}
+    
+    ## Function to return the color of cell
+    color.function <- function (x ,y){
+      color = filter(df, row == x & column == y & occupancy == 1)$tag1
+      if (identical(color, character(0)) == TRUE){
+        color = "Empty"
+        return (color)
+      } else {
+        return (color)
+      }
+    }
+    
+    
+    # Start Roaming the Matrix by Checking Occupancy one by one
+    for(elements in rownames(df)){
+      Arow = (df[elements, "row"])
+      Acolumn = (df[elements, "column"])
+      if (Arow == cell_size){
+        ANSrow = 1
+        ANScolumn = Acolumn
+      } else {
+        ANSrow = Arow+1
+        ANScolumn = Acolumn}
+      
+      if (Acolumn == 1){
+        ANWrow = Arow
+        ANWcolumn = cell_size
+      } else {
+        ANWrow = Arow
+        ANWcolumn = Acolumn-1}
+      
+      if (Arow == 1){
+        ANNrow = cell_size
+        ANNcolumn = Acolumn
+      } else {
+        ANNrow = Arow-1
+        ANNcolumn = Acolumn}
+      
+      if (Acolumn == cell_size){
+        ANErow = Arow
+        ANEcolumn = 1
+      } else {
+        ANErow = Arow
+        ANEcolumn = Acolumn+1}
+      
+      #print(c(Arow, Acolumn, ANEcolumn))
+      
+      AO = occupancy.function(Arow, Acolumn)
+      SO = occupancy.function(ANSrow, ANScolumn)
+      WO = occupancy.function(ANWrow, ANWcolumn)
+      NO = occupancy.function(ANNrow, ANNcolumn)
+      EO = occupancy.function(ANErow, ANEcolumn)
+      
+      #print(c(AO, SO, WO, NO, EO))
+      
+      
+      CAT = color.function(Arow, Acolumn)
+      CST = color.function(ANSrow, ANScolumn)
+      CWT = color.function(ANWrow, ANWcolumn)
+      CNT = color.function(ANNrow, ANNcolumn)
+      CET = color.function(ANErow, ANEcolumn)
+      
+      #print(c(CST, CWT, CNT, CET))
+      
+      AT = tags.function(Arow, Acolumn)
+      ST = tags.function(ANSrow, ANScolumn)
+      WT = tags.function(ANWrow, ANWcolumn)
+      NT = tags.function(ANNrow, ANNcolumn)
+      ET = tags.function(ANErow, ANEcolumn)
+      
+      
+      interaction.function <- function(Nrow = NULL, Ncolumn = NULL, 
+                                       Atag1 = "A", Atag2 = NULL, 
+                                       Atag3 = NULL, Ntag1 = "N"){
         
-      }}
-    
-    South_ID = c(Arow, Acolumn, ANSrow, ANScolumn, CAT, AT$tag2, AT$tag3,  CST)
-    West_ID = c(Arow, Acolumn, ANWrow, ANWcolumn, CAT, AT$tag2, AT$tag3,  CWT)
-    North_ID = c(Arow, Acolumn, ANNrow, ANNcolumn, CAT, AT$tag2, AT$tag3,  CNT)
-    East_ID = c(Arow, Acolumn, ANErow, ANEcolumn, CAT, AT$tag2, AT$tag3,  CET)
-    
-    #print(South_ID)
-    #if (identical(char_zero, (c(South_ID, West_ID, North_ID, East_ID)) == FALSE)) {
-      NSI = interaction.function(South_ID)
-      NWI = interaction.function(West_ID)
-      NNI = interaction.function(North_ID)
-      NEI = interaction.function(East_ID)
-    #}
-    
-  }
-  }
-i = i+1
+        nbr_location = which((df$row == Nrow) & (df$column == Ncolumn))
+        cell_location = which(df$row == Arow & df$column == Acolumn)
+        
+        if (identical(nbr_location, integer(0)) == FALSE){
+          if(isTRUE((Atag1 == Ntag1) & (Atag2 == 0)  )){
+            df[cell_location, ]$PTR = df[nbr_location, ]$PTR  - cost
+            df[nbr_location, ]$PTR = df[nbr_location, ]$PTR + benefit
+            
+          } else if(isTRUE((Atag1 != Ntag1) & identical(Atag3, 0) )){
+            df[cell_location, ]$PTR = df[nbr_location, ]$PTR  - cost
+            df[nbr_location, ]$PTR = df[nbr_location, ]$PTR + benefit
+            
+            
+          } else {
+            whatever = 1
+            
+          }}}
+        
+        South_ID = c(ANSrow, ANScolumn, CAT, AT$tag2, AT$tag3,  CST)
+        West_ID = c(ANWrow, ANWcolumn, CAT, AT$tag2, AT$tag3,  CWT)
+        North_ID = c(ANNrow, ANNcolumn, CAT, AT$tag2, AT$tag3,  CNT)
+        East_ID = c(ANErow, ANEcolumn, CAT, AT$tag2, AT$tag3,  CET)
+        
+        NSI = interaction.function(Nrow = ANSrow, Ncolumn = ANScolumn, CAT, AT$tag2, AT$tag3,  CST)
+        NWI = interaction.function(Nrow = ANWrow, Ncolumn = ANWcolumn, CAT, AT$tag2, AT$tag3,  CWT)
+        NNI = interaction.function(Nrow = ANNrow, Ncolumn = ANNcolumn, CAT, AT$tag2, AT$tag3,  CNT)
+        NEI = interaction.function(Nrow = ANErow, Ncolumn = ANEcolumn, CAT, AT$tag2, AT$tag3,  CET)
 
-df_append <- cbind(df, i)
-tsdf = rbind(tsdf,df_append)
+        
+      
+    }
+    i = i+1
+    
+    df_append <- cbind(df, i)
+    tsdf = rbind(tsdf,df_append)
+  }
 }
-
 #png_files <- list.files("/Users/shashankpritam/Documents/qb_project", pattern = ".*png$", full.names = TRUE)
 #gifski(png_files, gif_file = "matrix_animation.gif", width = 1800, height = 1500, delay = 1)
 invisible(file.remove(list.files(pattern = "*.png")))
