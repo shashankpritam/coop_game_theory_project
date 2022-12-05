@@ -29,14 +29,15 @@ colnames(tsdf) <- c('Arow', 'Acolumn', 'AO',
                     'NErow', 'NEcolumn', 'NEO', 'NEI',
                     'NWrow', 'NWcolumn', 'NWO', 'NWI', 
                     'BasePTR', 'NewPTR')
+# Temporary Storage Dataframe (For One Generation) Initialized
+df <- data.frame(matrix(ncol = 7, nrow = 0))
+colnames(df) <- c('row', 'column', 'occupancy', 'tag1', 'tag2', 'tag3', 'PTR')
 
 i <- 0
-gen <- 2
+gen <- 5
 while (i < gen)
 {
-  # Temporary Storage Dataframe (For One Generation) Initialized
-  df <- data.frame(matrix(ncol = 7, nrow = 0))
-  colnames(df) <- c('row', 'column', 'occupancy', 'tag1', 'tag2', 'tag3', 'PTR')
+
   
   
   setwd('/Users/shashankpritam/Documents/qb_project')
@@ -195,26 +196,25 @@ while (i < gen)
       NEI = interaction.function(East_ID)
     #}
     
-    
-    #if (!is.null(c(NSI, NWI, NNI, NEI))){
-      print(c(NSI, NWI, NNI, NEI))
-    #}
-    
+      
     #tsdf[nrow(tsdf) + 1,] <- c(Arow, Acolumn, AO, 
     #                           ANSrow,ANScolumn, SO, NSI,
     #                          ANWrow, ANWcolumn, WO, NWI,
-    #                          ANNrow, ANNcolumn, NO, NNI,
+    #                         ANNrow, ANNcolumn, NO, NNI,
     #                          ANErow, ANEcolumn, EO, NEI, 
     #                          base_PTR, 'NewPTR') 
-    #
+    
+      
+      
     
   }
   }
 i = i+1
+print(df)
 }
 
 
-print(df)
+
 png_files <- list.files("/Users/shashankpritam/Documents/qb_project", pattern = ".*png$", full.names = TRUE)
 #gifski(png_files, gif_file = "matrix_animation.gif", width = 1800, height = 1500, delay = 1)
 invisible(file.remove(list.files(pattern = "*.png")))
