@@ -162,23 +162,31 @@ while (i < gen)
     ET = tags.function(ANErow, ANEcolumn)
     
     
-    interaction.function <- function(Atag1 = "Atag1", Atag2 = "Atag2", Atag3 = "Atag3",  
+    interaction.function <- function(Arow = 0, Acolumn = 0, Nrow = 0, Ncolumn = 0, 
+                                     Atag1 = "Atag1", Atag2 = "Atag2", Atag3 = "Atag3",  
                                      Ntag1 = "Ntag1", Ntag2 = "Ntag2", Ntag3 = "Ntag3"){
       if(isTRUE((Atag1 == Ntag1) & (Atag2 == 0))){
-        return (c(cost, benefit))
-        
+        df[elements, "PTR"] = df[elements, "PTR"] - cost
+        df[which(df$row == Nrow & df$column == Ncolumn), ]$PTR = 
+          df[which(df$row == Nrow & df$column == Ncolumn), ]$PTR + benefit
+       
       } else if(isTRUE((Atag1 != Ntag1) & (Atag3 == 0))){
-        return (c(cost, benefit))
-        
+        df[elements, "PTR"] = df[elements, "PTR"] - cost
+        df[which(df$row == Nrow & df$column == Ncolumn), ]$PTR = 
+          df[which(df$row == Nrow & df$column == Ncolumn), ]$PTR + benefit
+    
       } else {
-        return(c(0, 0))
+        df[elements, "PTR"] = df[elements, "PTR"]
+        df[which(df$row == Nrow & df$column == Ncolumn), ]$PTR = 
+          df[which(df$row == Nrow & df$column == Ncolumn), ]$PTR
+        
         
       }}
     
-    South_ID = c(CAT, AT$tag2, AT$tag3,  CST, ST$tag2, ST$tag3)
-    West_ID = c(CAT, AT$tag2, AT$tag3,  CWT, WT$tag2, WT$tag3)
-    North_ID = c(CAT, AT$tag2, AT$tag3,  CNT, NT$tag2, NT$tag3)
-    East_ID = c(CAT, AT$tag2, AT$tag3,  CET, ET$tag2, ET$tag3)
+    South_ID = c(Arow, Acolumn, ANSrow, ANScolumn, CAT, AT$tag2, AT$tag3,  CST, ST$tag2, ST$tag3)
+    West_ID = c(Arow, Acolumn, ANWrow, ANWcolumn, CAT, AT$tag2, AT$tag3,  CWT, WT$tag2, WT$tag3)
+    North_ID = c(Arow, Acolumn, ANNrow, ANNcolumn, CAT, AT$tag2, AT$tag3,  CNT, NT$tag2, NT$tag3)
+    East_ID = c(Arow, Acolumn, ANErow, ANEcolumn, CAT, AT$tag2, AT$tag3,  CET, ET$tag2, ET$tag3)
     
     #if (identical(char_zero, (c(South_ID, West_ID, North_ID, East_ID)) == FALSE)) {
       NSI = interaction.function(South_ID)
