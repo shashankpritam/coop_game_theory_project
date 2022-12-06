@@ -62,16 +62,18 @@ interaction.function <- function(Nrow = NULL, Ncolumn = NULL,
   
   nbr_location = which((df$row == Nrow) & (df$column == Ncolumn))
   cell_location = which(df$row == Arow & df$column == Acolumn)
+  Original_APTR = df[cell_location, 7]
+  Original_NPTR = df[nbr_location, 7]
   
   if (identical(nbr_location, integer(0)) == FALSE){
     if(isTRUE((Atag1 == Ntag1) & (Atag2 == 0)  )){
-      df[cell_location, 7] <- df[cell_location, 7]  - cost
-      df[nbr_location, 7] <- df[nbr_location, 7] + benefit
+      df[cell_location, 7] <<- Original_APTR  - cost
+      df[nbr_location, 7] <<- Original_NPTR + benefit
       #print(c(Atag1, Ntag1, Nrow, Ncolumn, Atag2, Atag3, "Case 1"))
       
     } else if(isTRUE((Atag1 != Ntag1) & identical(Atag3, 0) )){
-      df[cell_location, 7] <- df[cell_location, 7]  - cost
-      df[nbr_location, 7] <- df[nbr_location, 7] + benefit
+      df[cell_location, 7] <<- Original_APTR  - cost
+      df[nbr_location, 7] <<- Original_NPTR + benefit
       #print(c(Atag1, Ntag1, Nrow, Ncolumn, Atag2, Atag3, "Case 2"))
       
       
@@ -204,16 +206,11 @@ while (i < gen)
       NO = occupancy.function(ANNrow, ANNcolumn)
       EO = occupancy.function(ANErow, ANEcolumn)
       
-      #print(c(AO, SO, WO, NO, EO))
-      
-      
       CAT = color.function(Arow, Acolumn)
       CST = color.function(ANSrow, ANScolumn)
       CWT = color.function(ANWrow, ANWcolumn)
       CNT = color.function(ANNrow, ANNcolumn)
       CET = color.function(ANErow, ANEcolumn)
-      
-      #print(c(CST, CWT, CNT, CET))
       
       AT = tags.function(Arow, Acolumn)
       ST = tags.function(ANSrow, ANScolumn)
@@ -221,16 +218,10 @@ while (i < gen)
       NT = tags.function(ANNrow, ANNcolumn)
       ET = tags.function(ANErow, ANEcolumn)
       
-      
-
-      
-      
       South_ID = c(ANSrow, ANScolumn, CAT, AT$tag2, AT$tag3,  CST)
       West_ID = c(ANWrow, ANWcolumn, CAT, AT$tag2, AT$tag3,  CWT)
       North_ID = c(ANNrow, ANNcolumn, CAT, AT$tag2, AT$tag3,  CNT)
       East_ID = c(ANErow, ANEcolumn, CAT, AT$tag2, AT$tag3,  CET)
-      
-      #print(c(South_ID, North_ID))
       
       NSI = interaction.function(Nrow = ANSrow, Ncolumn = ANScolumn, CAT, AT$tag2, AT$tag3,  CST)
       NWI = interaction.function(Nrow = ANWrow, Ncolumn = ANWcolumn, CAT, AT$tag2, AT$tag3,  CWT)
@@ -249,6 +240,13 @@ while (i < gen)
     # the mutaion rate and parents tags to be utilized
 ##--------------------------   Random Death    ---------------------------------
     
+    #random_death_prob = runif(1)
+    #len_of_df = nrow(df)
+    #sample(1:len_of_df, 3, replace=FALSE)
+    
+    #if (random_death_prob >= 0.5){
+      
+    #}
     
     
     
