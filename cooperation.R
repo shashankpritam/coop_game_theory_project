@@ -16,6 +16,7 @@ cost = 0.01
 benefit = 0.03
 mutation_rate = 0.005
 cell_size = 50
+gen <- 20
 matrix_size = cell_size*cell_size
 random_coop_defect = list(0, 1)
 random_color = list("blue", "black", "green", "yellow")
@@ -112,7 +113,6 @@ colnames(df) <- c('row', 'column', 'occupancy', 'tag1', 'tag2', 'tag3', 'PTR')
 
 # ------------------------- Simulation Starts Here -----------------------------
 i <- 0
-gen <- 100
 while (i < gen)
 {
   
@@ -155,11 +155,11 @@ while (i < gen)
     }
     
     
-    #{name = paste('Matrix_',i,'_plot.png', sep='')}
-    #png(name,width=9,height=7.5,units='in',res=400)
-    #par(mar=c(5.1, 4.1, 4.1, 4.1),pty='s')
-    #plot(Graph_Matrix, col=topo.colors, main = "Graph Matrix", xlab = "Cell", ylab = "Cell",)
-    #dev.off()  
+    {name = paste('Matrix_',i,'_plot.png', sep='')}
+    png(name,width=9,height=7.5,units='in',res=400)
+    par(mar=c(5.1, 4.1, 4.1, 4.1),pty='s')
+    plot(Graph_Matrix, col=topo.colors, main = "Graph Matrix", xlab = "Cell", ylab = "Cell",)
+    dev.off()  
     
     par(mar=c(5.1, 4.1, 4.1, 4.1),pty='s')
     plot(Graph_Matrix, col=topo.colors, main = "Graph Matrix", xlab = "Cell", ylab = "Cell",)
@@ -200,11 +200,6 @@ while (i < gen)
         ANErow = Arow
         ANEcolumn = Acolumn+1}
       
-      AO = occupancy.function(Arow, Acolumn)
-      SO = occupancy.function(ANSrow, ANScolumn)
-      WO = occupancy.function(ANWrow, ANWcolumn)
-      NO = occupancy.function(ANNrow, ANNcolumn)
-      EO = occupancy.function(ANErow, ANEcolumn)
       
       CAT = color.function(Arow, Acolumn)
       CST = color.function(ANSrow, ANScolumn)
@@ -233,27 +228,104 @@ while (i < gen)
     # Expected Output - Data frame Updated with new PTR values ------------------
 ##--------------------- Birth and PTR realization ------------------------------
     
-    
+    for(elements in rownames(df)){
+      Arow = (df[elements, "row"])
+      Acolumn = (df[elements, "column"])
+      current_ptr = (df[elements, "PTR"])
+      if (Arow == cell_size){
+        ANSrow = 1
+        ANScolumn = Acolumn
+      } else {
+        ANSrow = Arow+1
+        ANScolumn = Acolumn}
+      
+      if (Acolumn == 1){
+        ANWrow = Arow
+        ANWcolumn = cell_size
+      } else {
+        ANWrow = Arow
+        ANWcolumn = Acolumn-1}
+      
+      if (Arow == 1){
+        ANNrow = cell_size
+        ANNcolumn = Acolumn
+      } else {
+        ANNrow = Arow-1
+        ANNcolumn = Acolumn}
+      
+      if (Acolumn == cell_size){
+        ANErow = Arow
+        ANEcolumn = 1
+      } else {
+        ANErow = Arow
+        ANEcolumn = Acolumn+1}
+      
+      AO = occupancy.function(Arow, Acolumn)
+      SO = occupancy.function(ANSrow, ANScolumn)
+      WO = occupancy.function(ANWrow, ANWcolumn)
+      NO = occupancy.function(ANNrow, ANNcolumn)
+      EO = occupancy.function(ANErow, ANEcolumn)
+      
+      CAT = color.function(Arow, Acolumn)
+      AT = tags.function(Arow, Acolumn)
+      
+      
+      if (current_ptr > 0.12){
+        list_of_vacant_nbr = list()
+        if (SO == 0){
+          list_of_vacant_nbr = append(list_of_vacant_nbr, c(ANSrow, ANScolumn), after = length(x))
+        } else if (WO == 0){
+          list_of_vacant_nbr = append(list_of_vacant_nbr, c(ANWrow, ANWcolumn), after = length(x))
+        } else if (NO == 0){
+          list_of_vacant_nbr = append(list_of_vacant_nbr, c(ANNrow, ANNcolumn), after = length(x))
+        } else if (EO == 0){
+          list_of_vacant_nbr = append(list_of_vacant_nbr, c(ANErow, ANEcolumn), after = length(x))
+        } else{
+          some_value = 1
+        }
+        vacant_nbr = sample(list_of_vacant_nbr)
+        
+        # Setting Up Immigrant Tags
+        # A case of no mutation
+        progeny_tag_1_color = CAT
+        progeny_tag_2_same_color = AT$tag2
+        progeny_tag_3_diff_color = AT$tag3
+        
+        #progeny Placement in the Dataframe Begins
+        progeny_row = vacant_nbr[[1]]
+        progeny_column = vacant_nbr[[2]]
+        
+        df[nrow(df) + 1,] <- c(progeny_row, progeny_column, 1, progeny_tag_1_color, 
+                               progeny_tag_2_same_color, progeny_tag_3_diff_color, 
+                               base_PTR)
+        
+        
+        
+        
+        }
+    }
     
     # Expected Output - Data frame Updated with new progeny appended at 
     # empty cells neighboring the occupied cell when PTR is realized
     # the mutaion rate and parents tags to be utilized
 ##--------------------------   Random Death    ---------------------------------
     
-    #random_death_prob = runif(1)
-    #len_of_df = nrow(df)
-    #sample(1:len_of_df, 3, replace=FALSE)
-    
-    #if (random_death_prob >= 0.5){
+    len_of_df = nrow(df)
+    if (i >= 10){ #population has to be more than 10 be killed
+      death_rate = len_of_df%/%10 #in percentage
+      sample_subset_df = sample_n(df, death_rate) 
+      print(sample_subset_df)
+      print(i)
+      df <- anti_join(df, sample_subset_df)
+      print(df)
+
       
-    #}
-    
-    
-    
-    
+    }
     # Expected Output - Data frame Updated with removal of random cell 
     # with some probability
-    
+ 
+      
+         
 ##-------------------     End of a generation     ------------------------------    
     
     i = i+1
@@ -263,12 +335,12 @@ while (i < gen)
     }
 }
 
+  
+
 ## Save gif
-#png_files <- list.files("/Users/shashankpritam/Documents/qb_project", pattern = ".*png$", full.names = TRUE)
-#gifski(png_files, gif_file = "matrix_animation.gif", width = 1800, height = 1500, delay = 1)
+png_files <- list.files("/Users/shashankpritam/Documents/qb_project", pattern = ".*png$", full.names = TRUE)
+gifski(png_files, gif_file = "matrix_animation.gif", width = 1800, height = 1500, delay = 1)
 invisible(file.remove(list.files(pattern = "*.png")))
-
-
 
 
 
