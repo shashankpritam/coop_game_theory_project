@@ -16,7 +16,7 @@ cost = 0.01
 benefit = 0.03
 mutation_rate = 0.005
 cell_size = 50
-gen = 50
+gen = 100
 matrix_size = cell_size*cell_size
 random_coop_defect = list(0, 1)
 random_color = list("blue", "black", "green", "yellow")
@@ -134,39 +134,15 @@ while (i < gen)
   
   ## Check if the cell is already occupied, if not, continue from here
 ## ------------------------ Every gen starts here ------------------------------
+  ## ------------------------Immigration starts here -----------------------------
   new_im = paste(random_row, random_column, 1, sep=" ")
   if (new_im %in% paste(df$row, df$column, df$occupancy, sep=" ") == FALSE)
   {
     df[nrow(df) + 1,] <- c(random_row, random_column, 1, immigrant_tag_1_color, 
                            immigrant_tag_2_same_color, immigrant_tag_3_diff_color, 
                            base_PTR)
-    
-## ------------------------Immigration starts here -----------------------------
-    #Immigrant Placement in the Matrix Begins
-    # if tag = 1, it implies defection or non-cooperation
-    if (immigrant_tag_2_same_color == 0 & immigrant_tag_3_diff_color == 0 ) {
-      Graph_Matrix[random_row, random_column] <- "Humanitarian"
-    } else if (immigrant_tag_2_same_color == 0 & immigrant_tag_3_diff_color == 1 ) {
-      Graph_Matrix[random_row, random_column] <- "Ethnocentric"
-    } else if (immigrant_tag_2_same_color == 1 & immigrant_tag_3_diff_color == 0 ) {
-      Graph_Matrix[random_row, random_column] <- "Traitor"
-    } else if (immigrant_tag_2_same_color == 1 & immigrant_tag_3_diff_color == 1 ) {
-      Graph_Matrix[random_row, random_column] <- "Selfish"
-    } else {
-      Graph_Matrix[random_row, random_column] <- "Null"
     }
     
-    
-    {name = paste('Matrix_',i,'_plot.png', sep='')}
-    png(name,width=9,height=7.5,units='in',res=400)
-    par(mar=c(5.1, 4.1, 4.1, 4.1),pty='s')
-    plot(Graph_Matrix, col=topo.colors, main = "Graph Matrix", xlab = "Cell", ylab = "Cell",)
-    dev.off()  
-    
-    par(mar=c(5.1, 4.1, 4.1, 4.1),pty='s')
-    plot(Graph_Matrix, col=topo.colors, main = "Graph Matrix", xlab = "Cell", ylab = "Cell",)
-    
-
     
     # Output - Dataframe Updated with new immigrant append at the Queue 
 ##--------------------- Interaction and PTR Update -----------------------------    
@@ -290,7 +266,7 @@ while (i < gen)
           some_value = 1
         }
         vacant_nbr = sample(list_of_vacant_nbr)
-        
+        print(vacant_nbr)
         # Setting Up Immigrant Tags
         # A case of no mutation
         progeny_tag_1_color = CAT
@@ -325,13 +301,45 @@ while (i < gen)
  
       
          
-##-------------------     End of a generation     ------------------------------    
-    
-    i = i+1
-    df_append <- cbind(df, i)
-    tsdf = rbind(tsdf,df_append)
-  
+    ##-------------------     End of a generation     ------------------------------    
+    #Cell Placement in the Matrix Begins
+    # if tag = 1, it implies defection or non-cooperation
+    for(elements in rownames(df)){
+      
+      Arow = as.integer(noquote(df[elements, "row"]))
+      Acolumn = as.integer(noquote(df[elements, "column"]))
+      AT = tags.function(Arow, Acolumn)
+      
+      
+      if(isTRUE((AT$tag2 == 0) & (AT$tag3 == 0 ))){
+        Graph_Matrix[random_row, random_column] <- "Humanitarian"
+      } else if (isTRUE((AT$tag2 == 0) & (AT$tag3 == 1 ))){
+        Graph_Matrix[random_row, random_column] <- "Ethnocentric"
+      } else if (isTRUE((AT$tag2 == 1) & (AT$tag3 == 0 ))){
+        Graph_Matrix[random_row, random_column] <- "Traitor"
+      } else if(isTRUE((AT$tag2 == 1) & (AT$tag3 == 1 ))){
+        Graph_Matrix[random_row, random_column] <- "Selfish"
+      } else {
+        Graph_Matrix[random_row, random_column] <- "Null"
+        print(c(AT$tag2, AT$tag3, "Error in Tags"))
+      }
+      
+      par(mar=c(5.1, 4.1, 4.1, 4.1),pty='s')
+      plot(Graph_Matrix, col=topo.colors, main = "Graph Matrix", xlab = "Cell", ylab = "Cell",)
+      
     }
+    
+  {name = paste('Matrix_',i,'_plot.png', sep='')}
+  png(name,width=9,height=7.5,units='in',res=400)
+  par(mar=c(5.1, 4.1, 4.1, 4.1),pty='s')
+  plot(Graph_Matrix, col=topo.colors, main = "Graph Matrix", xlab = "Cell", ylab = "Cell",)
+  dev.off()  
+  
+  i = i+1
+  df_append <- cbind(df, i)
+  tsdf = rbind(tsdf,df_append)
+  
+
 }
 
   
