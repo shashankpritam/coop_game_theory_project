@@ -16,7 +16,7 @@ cost = 0.01
 benefit = 0.03
 mutation_rate = 0.005
 cell_size = 50
-gen <- 20
+gen = 50
 matrix_size = cell_size*cell_size
 random_coop_defect = list(0, 1)
 random_color = list("blue", "black", "green", "yellow")
@@ -63,19 +63,21 @@ interaction.function <- function(Nrow = NULL, Ncolumn = NULL,
   
   nbr_location = which((df$row == Nrow) & (df$column == Ncolumn))
   cell_location = which(df$row == Arow & df$column == Acolumn)
-  Original_APTR = df[cell_location, 7]
-  Original_NPTR = df[nbr_location, 7]
+  Original_APTR = as.numeric(noquote(df[cell_location, 7]))
+  Original_NPTR = as.numeric(noquote(df[nbr_location, 7]))
   
   if (identical(nbr_location, integer(0)) == FALSE){
     if(isTRUE((Atag1 == Ntag1) & (Atag2 == 0)  )){
       df[cell_location, 7] <<- Original_APTR  - cost
       df[nbr_location, 7] <<- Original_NPTR + benefit
-      #print(c(Atag1, Ntag1, Nrow, Ncolumn, Atag2, Atag3, "Case 1"))
+      #print(c(Atag1, Ntag1, Nrow, Ncolumn, Atag2, Atag3, 
+      #        df[cell_location, 7], df[nbr_location, 7], "Case 1"))
       
     } else if(isTRUE((Atag1 != Ntag1) & identical(Atag3, 0) )){
       df[cell_location, 7] <<- Original_APTR  - cost
       df[nbr_location, 7] <<- Original_NPTR + benefit
-      #print(c(Atag1, Ntag1, Nrow, Ncolumn, Atag2, Atag3, "Case 2"))
+      #print(c(Atag1, Ntag1, Nrow, Ncolumn, Atag2, Atag3,
+      #        df[cell_location, 7], df[nbr_location, 7], "Case 2"))
       
       
     } else {
@@ -170,8 +172,10 @@ while (i < gen)
 ##--------------------- Interaction and PTR Update -----------------------------    
     # Start Roaming the Matrix by Checking Occupancy one by one
     for(elements in rownames(df)){
-      Arow = (df[elements, "row"])
-      Acolumn = (df[elements, "column"])
+
+      Arow = as.integer(noquote(df[elements, "row"]))
+      Acolumn = as.integer(noquote(df[elements, "column"]))
+      
       if (Arow == cell_size){
         ANSrow = 1
         ANScolumn = Acolumn
@@ -229,8 +233,10 @@ while (i < gen)
 ##--------------------- Birth and PTR realization ------------------------------
     
     for(elements in rownames(df)){
-      Arow = (df[elements, "row"])
-      Acolumn = (df[elements, "column"])
+
+      Arow = as.integer(noquote(df[elements, "row"]))
+      Acolumn = as.integer(noquote(df[elements, "column"]))
+      
       current_ptr = (df[elements, "PTR"])
       if (Arow == cell_size){
         ANSrow = 1
@@ -299,9 +305,6 @@ while (i < gen)
                                progeny_tag_2_same_color, progeny_tag_3_diff_color, 
                                base_PTR)
         
-        
-        
-        
         }
     }
     
@@ -310,17 +313,13 @@ while (i < gen)
     # the mutaion rate and parents tags to be utilized
 ##--------------------------   Random Death    ---------------------------------
     
-    len_of_df = nrow(df)
+    len_of_df = as.integer(noquote(nrow(df)))
     if (i >= 10){ #population has to be more than 10 be killed
       death_rate = len_of_df%/%10 #in percentage
       sample_subset_df = sample_n(df, death_rate) 
-      print(sample_subset_df)
-      print(i)
-      df <- anti_join(df, sample_subset_df)
-      print(df)
-
-      
+      df <- suppressMessages(anti_join(df, sample_subset_df))
     }
+    
     # Expected Output - Data frame Updated with removal of random cell 
     # with some probability
  
