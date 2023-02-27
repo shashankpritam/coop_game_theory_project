@@ -1,1 +1,1 @@
-# ethnocentrism_r_project
+# Ethnocentrism R Project
